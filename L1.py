@@ -6,8 +6,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-import statsmodels.formula.api as smf
-import seaborn as sns
 
 data = pd.read_csv('AB_NYC_2019_expanded.csv')
 data = data[data['neighbourhood_group'] == 'Brooklyn']

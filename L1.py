@@ -7,7 +7,7 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
-data = pd.read_csv('AB_NYC_2019_expanded.csv')
+data = pd.read_csv('AB_NYC_2019.csv')
 data = data[data['neighbourhood_group'] == 'Brooklyn']
 
 

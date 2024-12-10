@@ -7,7 +7,7 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
-data = pd.read_csv('AB_NYC_2019.csv')
+data = pd.read_csv('AB_NYC_2019_2.csv')
 data = data[data['neighbourhood_group'] == 'Brooklyn']
 
 
@@ -41,14 +41,14 @@ def met_line_reg():
 
 def met2():
     d = data[data['price'] > 0]
-    d['reviews_per_month'].fillna(0, inplace=True)
+    d['reviews_per_month'].fillna(0.0)
 
     # Features and target
     x = d[['reviews_per_month', 'calculated_host_listings_count', 'number_of_reviews']]
     y = d['price']  # Use price directly without log transformation
 
     # Split data into training and testing sets
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.5, random_state=42)
 
     # Train the model
     model = LinearRegression().fit(x_train, y_train)
@@ -62,7 +62,7 @@ def met2():
 
     print('mse: %.3f, mae: %.3f' % (mse, mae))
 
-
+#met_line_reg()
 met2()
 
 

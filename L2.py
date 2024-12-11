@@ -31,21 +31,25 @@ print("percentage of subscription", pct_of_sub*100)
 
 
 def categorize_price(price):
-    if price < 5000:
+    if price < 7000:
         return 1
-    elif 5001 <= price <= 10000:
+    elif 7000 < price < 20000:
         return 2
-    elif 10001 <= price <= 15000:
-        return 3
     else:
-        return 4
+        return 3
+
 
 def m3():
     from sklearn.model_selection import train_test_split
     from sklearn.preprocessing import LabelEncoder
     from sklearn.metrics import confusion_matrix
 
+    data['Manufacturer'] = np.where(data['Manufacturer'] == 'LEXUS', 'Basic', data['Manufacturer'])
+    data['Manufacturer'] = np.where(data['Manufacturer'] == 'HONDA', 'Basic', data['Manufacturer'])
     data_prepared = data.copy()
+
+    data_prepared = data_prepared.drop(columns=["ID", "Model", 'Engine volume', 'Color', 'Doors'])  # Assuming 'Model' is too specific
+
     # Convert "Mileage" and "Levy" to numeric values
     data_prepared['Mileage'] = data_prepared['Mileage'].str.replace(' km', '').str.replace(' ', '').astype(float)
     data_prepared['Levy'] = pd.to_numeric(data_prepared['Levy'].str.replace('-', '0'))
@@ -59,6 +63,7 @@ def m3():
         data_prepared[column] = le.fit_transform(data_prepared[column])
         label_encoders[column] = le
 
+
     # Update features and target
     X = data_prepared.drop(columns=['Price', 'Price_Category'])
     y = data_prepared['Price_Category']
@@ -67,7 +72,7 @@ def m3():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 
-    lr_model = LogisticRegression(solver='saga', max_iter=2000, random_state=42)
+    lr_model = LogisticRegression(max_iter=4000, random_state=42)
     lr_model.fit(X_train, y_train)
 
     # Предсказание на тестовой выборке
@@ -77,7 +82,28 @@ def m3():
     print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(lr_model.score(X_test, y_test)))
     confusion_matrix = confusion_matrix(y_test, y_pred)
     print(confusion_matrix)
-    print(classification_report(y_test, y_pred, zero_division=0))
+    print(classification_report(y_test, y_pred))
+    logit_roc_auc = roc_auc_score(y_test, lr_model.predict_proba(X_test), multi_class='ovr', average='macro')
+
+    print(f"ROC-AUC Score: {logit_roc_auc:.2f}")
+
+    # ROC-кривая для многоклассовой классификации
+    plt.figure()
+
+    for i in range(len(lr_model.classes_)):
+        fpr, tpr, _ = roc_curve(y_test == i + 1, lr_model.predict_proba(X_test)[:, i])  # Прогнозы для каждого класса
+        plt.plot(fpr, tpr,
+                 label=f"Class {i + 1} (area = {roc_auc_score(y_test == i + 1, lr_model.predict_proba(X_test)[:, i]):.2f})")
+
+    plt.plot([0, 1], [0, 1], 'r--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic')
+    plt.legend(loc="lower right")
+    plt.savefig('Log_ROC')
+    plt.show()
 
 def m2():
     from sklearn.metrics import confusion_matrix

@@ -105,52 +105,6 @@ def m3():
     plt.savefig('Log_ROC')
     plt.show()
 
-def m2():
-    from sklearn.metrics import confusion_matrix
-    # Убираем ненужные столбцы
-    columns_to_drop = ['ID', 'Levy', 'Model', 'Engine volume', 'Color', 'Category', 'Leather interior']
-    data_cleaned = data.drop(columns=columns_to_drop)
-
-
-
-    # Кодирование целевой переменной (neighbourhood_group)
-    label_encoder = LabelEncoder()
-    data_cleaned['Manufacturer'] = label_encoder.fit_transform(data_cleaned['Manufacturer'])
-
-    # Кодирование категориальных признаков (например, room_type)
-    data_encoded = pd.get_dummies(data_cleaned, columns=['Price'], drop_first=True)
-
-    # Разделение данных на признаки и целевую переменную
-    X = data_encoded.drop(columns=['Manufacturer'])
-    y = data_encoded['Manufacturer']
-
-    # Разделение на обучающую и тестовую выборки
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=0)
-
-    lr_model = LogisticRegression()
-    lr_model.fit(X_train, y_train)
-
-    # Предсказание на тестовой выборке
-    y_pred = lr_model.predict(X_test)
-
-    # Оценка модели
-    print('Accuracy of logistic regression classifier on test set: {:.2f}'.format(lr_model.score(X_test, y_test)))
-    confusion_matrix = confusion_matrix(y_test, y_pred)
-    print(confusion_matrix)
-    print(classification_report(y_test, y_pred))
-    logit_roc_auc = roc_auc_score(y_test, lr_model.predict(X_test))
-    fpr, tpr, thresholds = roc_curve(y_test, lr_model.predict_proba(X_test)[:, 1])
-    plt.figure()
-    plt.plot(fpr, tpr, label='Logistic Regression (area = %0.2f)' % logit_roc_auc)
-    plt.plot([0, 1], [0, 1], 'r--')
-    plt.xlim([0.0, 1.0])
-    plt.ylim([0.0, 1.05])
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('Receiver operating characteristic')
-    plt.legend(loc="lower right")
-    plt.savefig('Log_ROC')
-    plt.show()
 
 m3()
 

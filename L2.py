@@ -16,24 +16,37 @@ import seaborn as sns
 sns.set(style="white")
 sns.set(style="whitegrid", color_codes=True)
 
+
+
 data = pd.read_csv('car_price_prediction.csv')
 #data = data[data['neighbourhood_group'] == 'Brooklyn' or data['neighbourhood_group'] == 'Manhattan' ]
-data['Manufacturer']=np.where(data['Manufacturer'] =='LEXUS', 'Basic', data['Manufacturer'])
-data['Manufacturer']=np.where(data['Manufacturer'] =='HONDA', 'Basic', data['Manufacturer'])
+#data['Manufacturer']=np.where(data['Manufacturer'] =='LEXUS', 'Basic', data['Manufacturer'])
+#data['Manufacturer']=np.where(data['Manufacturer'] =='HONDA', 'Basic', data['Manufacturer'])
 
 
-count_no_sub = len(data[data['Price']>=15000])
-count_sub = len(data[data['Price']<=14999])
-pct_of_no_sub = count_no_sub/(count_no_sub+count_sub)
-print("percentage of no subscription is", pct_of_no_sub*100)
-pct_of_sub = count_sub/(count_no_sub+count_sub)
-print("percentage of subscription", pct_of_sub*100)
+count_7000 = len(data[data['Price']<8000])
+count_7000_20000 = len(data[(data['Price'] > 8000) & (data['Price'] < 18500)])
+count_20000 = len(data[data['Price']>18500])
+pct_of_7000 = count_7000/(count_7000+count_7000_20000+count_20000)
+print("percentage of no subscription is", pct_of_7000*100)
+pct_of_7000_20000 = count_7000_20000/(count_7000+count_7000_20000+count_20000)
+print("percentage of subscription", pct_of_7000_20000*100)
+pct_of_20000 = count_20000/(count_7000+count_7000_20000+count_20000)
+print("percentage of subscription", pct_of_20000*100)
 
+#data = pd.read_csv('car_price_prediction.csv',header=0)
+#data = data.dropna()
+#print(data.shape)
+#print(list(data.columns))
+
+#sns.countplot(x='Price',data=data)
+#lt.show()
+#plt.savefig('count_plot')
 
 def categorize_price(price):
-    if price < 7000:
+    if price < 8000:
         return 1
-    elif 7000 < price < 20000:
+    elif 8000 < price < 18500:
         return 2
     else:
         return 3
@@ -44,8 +57,8 @@ def m3():
     from sklearn.preprocessing import LabelEncoder
     from sklearn.metrics import confusion_matrix
 
-    data['Manufacturer'] = np.where(data['Manufacturer'] == 'LEXUS', 'Basic', data['Manufacturer'])
-    data['Manufacturer'] = np.where(data['Manufacturer'] == 'HONDA', 'Basic', data['Manufacturer'])
+    #data['Manufacturer'] = np.where(data['Manufacturer'] == 'LEXUS', 'Basic', data['Manufacturer'])
+    #data['Manufacturer'] = np.where(data['Manufacturer'] == 'HONDA', 'Basic', data['Manufacturer'])
     data_prepared = data.copy()
 
     data_prepared = data_prepared.drop(columns=["ID", "Model", 'Engine volume', 'Color', 'Doors'])  # Assuming 'Model' is too specific

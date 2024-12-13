@@ -34,10 +34,10 @@ print("percentage of subscription", pct_of_7000_20000*100)
 pct_of_20000 = count_20000/(count_7000+count_7000_20000+count_20000)
 print("percentage of subscription", pct_of_20000*100)
 
-#data = pd.read_csv('car_price_prediction.csv',header=0)
-#data = data.dropna()
+data = pd.read_csv('car_price_prediction_expanded.csv',header=0)
+data = data.dropna()
 #print(data.shape)
-#print(list(data.columns))
+print(list(data.columns))
 
 #sns.countplot(x='Price',data=data)
 #lt.show()
